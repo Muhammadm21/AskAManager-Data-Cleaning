@@ -12,7 +12,8 @@ This is what real survey data looks like before anyone has touched it.
 ---
 
 ## Dataset
-- **Source:** [Ask A Manager Salary Survey 2021](https://www.askamanager.org/2021/04/how-much-money-do-you-make-4.html)
+- **Source:** [Ask A Manager Salary Survey 2021](https://oscarbaruffa.com/messy/
+)
 - **Columns:** 18 raw survey questions, reduced to 15 clean analysis-ready columns
 - **Tool used:** Microsoft Excel
 
