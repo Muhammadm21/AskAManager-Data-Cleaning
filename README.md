@@ -113,5 +113,5 @@ The workbook contains two sheets:
 
 ## Author
 **Muhammad** — Information Systems Student, Ajman University
-Specialization: E-Business Management / Business Intelligence
+Major: E-Business Management - Focus on: Business Intelligence
 [LinkedIn](https://www.linkedin.com/in/mohammad-mohammad-0547283b1/)
