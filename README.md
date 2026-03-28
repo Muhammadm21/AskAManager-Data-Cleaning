@@ -71,4 +71,4 @@ Filled blank cells with appropriate placeholders:
 ## Author
 **Muhammad** — Information Systems Student, Ajman University  
 Specialization: E-Business Management / Business Intelligence  
-[LinkedIn Profile](your-linkedin-url-here)
+[LinkedIn Profile] : https://www.linkedin.com/in/mohammad-mohammad-0547283b1/
