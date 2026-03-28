@@ -1,74 +1,116 @@
-# 🧹 AskAManager Salary Survey — Data Cleaning Project
+# AskAManager Salary Survey — Data Cleaning Project
 
-## Project Overview
+## Overview
 This project focuses exclusively on **data cleaning** using Microsoft Excel.
-The dataset is the AskAManager Salary Survey 2021 — a real-world, 
-messy dataset collected via Google Forms with 28,000+ free-text responses.
+The dataset is the AskAManager Salary Survey 2021 — a real-world, genuinely messy dataset
+collected via an open Google Form with no validation, no dropdowns, and no rules.
+Every response was typed freely by a different person.
+
+This is not a dataset artificially made messy for teaching purposes.
+This is what real survey data looks like before anyone has touched it.
+
+---
 
 ## Dataset
 - **Source:** [Ask A Manager Salary Survey 2021](https://www.askamanager.org/2021/04/how-much-money-do-you-make-4.html)
-- **Raw rows:** 28,211
-- **Columns:** 18 (renamed to 15 after removing irrelevant columns)
-- **Tools used:** Microsoft Excel
+- **Columns:** 18 raw survey questions, reduced to 15 clean analysis-ready columns
+- **Tool used:** Microsoft Excel
 
-## Problems Found in Raw Data
+---
 
-| # | Issue | Column(s) Affected |
+## Problems Identified in Raw Data
+
+| # | Problem | Column(s) Affected |
 |---|---|---|
-| 1 | 200+ variations of the same country name | Country |
-| 2 | Blank/missing values across multiple columns | Industry, City, Gender, Education |
-| 3 | Salary outliers (entries like $0, $33, $6 billion) | Annual_Salary |
-| 4 | Inconsistent text casing and spacing | Country, Industry |
-| 5 | Junk/nonsense entries (e.g. "dbfemf", "ss", "Remote") | Country |
-| 6 | Placeholder zeros used instead of proper null values | Industry, US_State |
-| 7 | Duplicate column semantics (3 columns rarely filled) | Job context, Currency context, Income context |
+| 1 | 200+ variations of the same country name due to free-text input | Country |
+| 2 | Salary values that were clearly not annual salaries (hourly rates, typos, absurd amounts) | Annual_Salary |
+| 3 | Text value "Unknown" stored in numeric salary and compensation columns | Annual_Salary, Additional_Compensation |
+| 4 | Blank/missing values across multiple columns with no placeholder | Industry, Gender, Education, City, US_State |
+| 5 | Number zero used as a blank replacement causing data type inconsistencies | Industry, US_State |
+| 6 | Inconsistent text casing and leading/trailing spaces | Country, Industry |
+| 7 | Junk entries — gibberish text, city names, sentences entered in the wrong field | Country |
+| 8 | Three columns with 74–93% missing values providing no analytical value | Job context, Currency context, Income context |
+
+---
 
 ## Cleaning Steps Performed
 
 ### 1. Column Renaming
-Renamed all 18 long survey question headers to short, clean column names
-(e.g. "How old are you?" → `Age_Group`)
+All 18 column headers were long survey questions written in plain English.
+Every column was renamed to a short, clean, analysis-ready name.
 
-### 2. Removed Unnecessary Columns
-Deleted 3 columns with 74–93% missing values that added no analytical value:
-- Job title context
-- Currency (Other) context  
-- Income context
+For example:
+- "How many years of professional work experience do you have overall?" → `Experience_Overall`
+- "What is your annual salary?" → `Annual_Salary`
+- "Please indicate the currency" → `Currency`
 
-### 3. Country Standardization *(Biggest task)*
-The Country column had 200+ variations of the same countries due to free-text input.
-- Standardized all USA/US/U.S./Usa/america variations → `United States`
-- Standardized UK/England/Scotland/Wales/Northern Ireland → `United Kingdom`
-- Fixed casing inconsistencies across all countries
-- Deleted 30 rows with junk/unidentifiable country entries
+### 2. Removing Irrelevant Columns
+Three columns had between 74% and 93% missing values.
+These were optional clarification fields that most respondents skipped entirely.
+Removing them reduced the dataset from 18 to 15 columns.
 
-### 4. Missing Values
-Filled blank cells with appropriate placeholders:
-- `Industry` blanks → `Unknown`
-- `Additional_Compensation` blanks → `0` (no bonus = zero)
-- `Gender` blanks → `Prefer not to say`
-- `US_State` for non-US rows → `N/A`
+### 3. Country Column Standardization
+This was the most time-intensive cleaning task in the entire project.
+Because the country field was free-text, respondents entered their country however they chose.
+The result was over 200 variations of the same country names.
 
-### 5. Salary Outlier Flagging & Removal
-- Added a helper column `Annual_Salary(Ok/flag)` to flag suspicious values
-- Flagged and deleted 132 rows where salary < 1,000 (likely hourly rates or typos)
-- Deleted 1 row with $0 salary (no valid data)
+Examples of what was found:
+- "United States" appeared as: USA, US, U.S., U.S.A., Usa, usa, america, UNITED STATES, UnitedStates, United states, United States of America, and dozens of typos and misspellings
+- "United Kingdom" appeared as: UK, Uk, uk, England, Scotland, Wales, Northern Ireland, Britain, Great Britain, and multiple combinations
+- Similar inconsistencies existed for Canada, Netherlands, Germany, New Zealand, and others
 
-## Results
+Every variation was identified and standardized to a consistent country name.
+Rows containing junk entries — gibberish text, city names, sentences, and unidentifiable values — were deleted entirely.
 
-| Metric | Before | After |
-|---|---|---|
-| Total rows | 28,211 | 28,053 |
-| Rows removed | — | 158 |
-| Country unique values | 200+ | 98 |
-| Columns | 18 | 15 |
+### 4. Salary Cleaning
+The Annual_Salary column had three types of problems:
+
+**Invalid text values:**
+Rows where salary was entered as "Unknown" were deleted entirely — a salary of Unknown has no analytical value.
+
+**Suspiciously low values:**
+Values below 1,000 were identified and deleted. These were clearly hourly rates or random numbers entered by mistake — no annual salary is $40 or $55.
+
+**Absurd outliers:**
+Extremely high values in non-JPY currencies were reviewed and deleted. Note: high values in JPY were kept because millions of yen is a normal salary range in Japan.
+
+### 5. Compensation Column Cleaning
+The Additional_Compensation column had "Unknown" text values mixed in with numeric data.
+All "Unknown" values were replaced with 0 — meaning the respondent has no additional compensation.
+This is the correct interpretation since the question asked for bonus/overtime amounts.
+
+### 6. Missing Values Treatment
+Blank cells were filled with appropriate placeholders per column:
+
+| Column | Blank Treatment |
+|---|---|
+| Industry | Filled with "Unknown" |
+| Additional_Compensation | Filled with 0 (no bonus = zero) |
+| Gender | Filled with "Prefer not to say" |
+| Education | Filled with "Not Specified" |
+| US_State (non-US rows) | Filled with "N/A" |
+| City | Filled with "Not Specified" |
+
+### 7. Zero Value Correction
+In some columns, blank cells had been replaced with the number 0 instead of proper text placeholders.
+This caused data type inconsistencies where text columns contained numeric values.
+All instances were identified and corrected to appropriate text placeholders.
+
+---
 
 ## Files
+
 | File | Description |
 |---|---|
-| `AskAManager_Cleaned_Final.xlsx` | Final cleaned dataset (Cleaned Data_Final sheet) |
+| `AskAManager_Clean_Final.xlsx` | Final cleaned dataset (Cleaned Data_Final sheet) with full formatting |
+
+The workbook contains two sheets:
+- `Form Responses 1` — original raw data, untouched
+- `Cleaned Data_Final` — fully cleaned and formatted output
+
+---
 
 ## Author
-**Muhammad** — Information Systems Student, Ajman University  
-Specialization: E-Business Management / Business Intelligence  
-[LinkedIn Profile] : https://www.linkedin.com/in/mohammad-mohammad-0547283b1/
+**Muhammad** — Information Systems Student, Ajman University
+Specialization: E-Business Management / Business Intelligence
+[LinkedIn](your-linkedin-url-here)
